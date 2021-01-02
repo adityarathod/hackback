@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_APIKEY,
@@ -12,7 +13,7 @@ const firebaseConfig = {
 
 if (typeof window !== 'undefined' && !firebase.apps.length) {
   firebase.initializeApp(firebaseConfig)
-  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 }
 
 export default firebase
