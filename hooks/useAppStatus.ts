@@ -1,15 +1,7 @@
 import { useState, useEffect } from 'react'
 import useAuth from './useAuth'
 import firebase from '../services/firebase'
-
-type AuthStatus = {
-  isAuth: boolean
-  authInitialized: boolean
-  isAdmin: boolean
-  user?: firebase.User
-}
-
-type AppStatus = 'unverified' | 'incomplete' | 'submitted' | 'accepted' | 'rejected'
+import { AppStatus } from '../types/application'
 
 const useAppStatus = (): AppStatus => {
   const [appStatus, setAppStatus] = useState<AppStatus>(null)
@@ -31,7 +23,7 @@ const useAppStatus = (): AppStatus => {
   }
   useEffect(() => {
     updateStatus()
-  }, [user, firebase])
+  }, [user])
   return appStatus
 }
 
