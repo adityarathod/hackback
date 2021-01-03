@@ -9,9 +9,9 @@ export type AppStatus =
 
 export interface TextQuestion {
   type: 'text'
-  label: string
+  title: string
   required: boolean
-  notice?: string
+  description?: string
   essay?: boolean
   charLimit?: number
   validationRegex?: string
@@ -21,19 +21,19 @@ export interface TextQuestion {
 
 export interface BooleanQuestion {
   type: 'bool'
-  label: string
+  title: string
   required: boolean
-  notice?: string
-  placeholder: string
+  description?: string
+  label: string
 }
 
 export interface DropdownQuestion {
   type: 'dropdown'
-  label: string
+  title: string
   required: boolean
   choices: string[]
   defaultChoice: string
-  notice?: string
+  description?: string
 }
 
 export interface TextAnswer {

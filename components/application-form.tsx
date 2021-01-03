@@ -14,11 +14,11 @@ const AppFormField: FC<AppFormFieldProps> = (props: AppFormFieldProps) => {
     <div className='py-2'>
       <div className='my-3'>
         <label htmlFor={props.id} className='text-md font-semibold block px-2'>
-          {props.question.label}
+          {props.question.title}
           {props.question.required ? '*' : ' (optional)'}
         </label>
         <label htmlFor={props.id} className='text-sm block px-2'>
-          {props.question.notice}
+          {props.question.description}
         </label>
         <ErrorMessage name={props.id} component='div' className='px-2 font-medium text-red-500' />
       </div>
@@ -81,14 +81,8 @@ const ApplicationForm: FC = () => {
         return (
           <AppFormField question={question} key={id} id={id}>
             <label htmlFor={id} className='block px-2'>
-              <Field
-                type='checkbox'
-                name={id}
-                placeholder={question.placeholder}
-                value='checked'
-                className='mr-2'
-              />
-              {question.placeholder}
+              <Field type='checkbox' name={id} value='checked' className='mr-2' />
+              {question.label}
             </label>
           </AppFormField>
         )
