@@ -4,6 +4,14 @@ import { HackBackConfig } from './types/config-file'
 const application: ApplicationQuestion[] = [
   {
     type: 'text',
+    label: 'Phone Number',
+    placeholder: '555-555-5555',
+    validationRegex: '\\d{3}-\\d{3}-\\d{4}',
+    validationFeedback: 'This must be a valid phone number in the XXX-XXX-XXXX format.',
+    required: true,
+  },
+  {
+    type: 'text',
     label: 'I would describe myself as a ...',
     placeholder: 'Designer, Data Scientist, iOS Wizard, Hacker Extraordinaire',
     required: true,

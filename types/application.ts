@@ -15,6 +15,7 @@ export interface TextQuestion {
   essay?: boolean
   charLimit?: number
   validationRegex?: string
+  validationFeedback?: string
   placeholder: string
 }
 

@@ -1,7 +1,6 @@
 import { FC, ReactNode } from 'react'
 import Link from 'next/link'
 import useAppStatus from '../hooks/useAppStatus'
-import firebase from '../services/firebase'
 import useAuth from '../hooks/useAuth'
 
 const ApplicationStatus: FC = () => {
