@@ -32,7 +32,7 @@ export interface DropdownQuestion {
   label: string
   required: boolean
   choices: string[]
-  defaultChoice: number
+  defaultChoice: string
   notice?: string
 }
 
@@ -56,9 +56,6 @@ export type ApplicationAnswer = TextAnswer | BooleanAnswer | DropdownAnswer
 
 export interface Application {
   status: AppStatus
-  fullName: string
-  school: string
-  gradYear: number
-  gender: string
-  otherQuestions: ApplicationAnswer[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any
 }
