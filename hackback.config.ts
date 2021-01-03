@@ -29,6 +29,7 @@ const application: ApplicationQuestion[] = [
       'Checking this box affirms that you are or will be 18 years or older by the time of the hackathon.',
     notice: 'We are not legally allowed to host minors (those under 18) for HackBack 2021.',
     required: true,
+    placeholder: 'I will be 18 by the time of HackBack.',
   },
   {
     type: 'dropdown',

@@ -14,7 +14,7 @@ const Application: FC = () => {
   return (
     <div>
       <Head>
-        <title>HackBack: Authenticate</title>
+        <title>HackBack: Apply</title>
       </Head>
       <Navbar />
       <main>

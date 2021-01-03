@@ -24,6 +24,7 @@ export interface BooleanQuestion {
   label: string
   required: boolean
   notice?: string
+  placeholder: string
 }
 
 export interface DropdownQuestion {

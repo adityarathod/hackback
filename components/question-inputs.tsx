@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { TextQuestion } from '../types/application'
+import { BooleanQuestion, TextQuestion } from '../types/application'
 
 interface TextQuestionInputProps {
   question: TextQuestion
@@ -64,6 +64,53 @@ export const TextQuestionInput: FC<TextQuestionInputProps> = ({
           className='px-3 py-2 text-sm text-black placeholder-gray-400 border border-gray-200 w-full rounded-md'
         />
       )}
+    </div>
+  )
+}
+
+interface BooleanQuestionInputProps {
+  question: BooleanQuestion
+}
+
+export const BooleanQuestionInput: FC<BooleanQuestionInputProps> = ({
+  question,
+}: BooleanQuestionInputProps) => {
+  const [checked, setChecked] = useState<boolean>(false)
+  const [error, setError] = useState(null)
+  const change = () => {
+    setChecked(!checked)
+    validate()
+  }
+  const validate = () => {
+    if (question.required && !checked) setError('This box must be checked.')
+    else setError(null)
+  }
+  return (
+    <div className='py-3' onMouseOut={validate}>
+      <div className='mb-3'>
+        <label htmlFor={question.label} className='text-md font-semibold block px-2'>
+          {question.required ? '(required)' : '(optional)'} {question.label}
+        </label>
+        <label htmlFor={question.label} className='text-sm mt-1 block px-2'>
+          {question.notice}
+        </label>
+        <label
+          htmlFor={question.label}
+          className='text-md font-semibold text-red-500 block my-1 px-2'>
+          {error}
+        </label>
+      </div>
+      <input
+        type='checkbox'
+        name={question.label}
+        checked={checked}
+        onChange={change}
+        onBlur={validate}
+        className='mx-2'
+      />
+      <span onClick={change} className='cursor-pointer'>
+        {question.placeholder}
+      </span>
     </div>
   )
 }
