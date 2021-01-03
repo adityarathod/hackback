@@ -40,12 +40,7 @@ const ApplicationStatus: FC = () => {
       )
       break
     default:
-      feedback = (
-        <div>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-        </div>
-      )
+      feedback = <div></div>
   }
   return (
     <div className='p-4 max-w-3xl mx-auto my-2 rounded-md bg-white shadow-md border border-gray-200'>
@@ -55,9 +50,13 @@ const ApplicationStatus: FC = () => {
           {feedback}
         </div>
         <div className='flex flex-row items-center justify-end'>
-          <span className='text-lg font-medium text-white uppercase py-2 px-4 bg-gray-700 rounded-full select-none'>
-            {status || '...'}
-          </span>
+          {status ? (
+            <span className='text-lg font-medium text-white uppercase py-2 px-4 bg-gray-700 rounded-full select-none'>
+              {status}
+            </span>
+          ) : (
+            <img src='/assets/loading.svg' alt='' className='w-7' />
+          )}
         </div>
       </div>
     </div>
