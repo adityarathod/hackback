@@ -1,5 +1,6 @@
 export type AppStatus =
   | 'unverified'
+  | 'not started'
   | 'incomplete'
   | 'submitted'
   | 'accepted'

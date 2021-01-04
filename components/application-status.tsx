@@ -25,11 +25,14 @@ const ApplicationStatus: FC = () => {
       )
       break
     case 'incomplete':
+    case 'not started':
       feedback = (
         <div>
           <p>
-            Your application is incomplete. To be considered, please complete your application
-            before the deadline.
+            {status === 'incomplete'
+              ? 'Your application is incomplete.'
+              : "You hasn't started working on your application."}{' '}
+            To be considered, please complete and submit your application before the deadline.
           </p>
           <p>
             <Link href='/application'>

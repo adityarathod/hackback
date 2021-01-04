@@ -14,7 +14,7 @@ const useAppStatus = (): AppStatus => {
     }
     const appSnapshot = await firebase.firestore().collection('applications').doc(user.uid).get()
     if (!appSnapshot.exists) {
-      setAppStatus('incomplete')
+      setAppStatus('not started')
     } else {
       const data = appSnapshot.data()
       if (data.status) setAppStatus(data.status)
