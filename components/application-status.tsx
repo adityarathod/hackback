@@ -1,29 +1,93 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, ReactNode } from 'react'
+import Link from 'next/link'
 import useAuth from '../hooks/useAuth'
-import firebase from '../services/firebase'
+import useApplication from '../hooks/useApplication'
+import config from '../hackback.config'
 
 const ApplicationStatus: FC = () => {
-  const [appStatus, setAppStatus] = useState('...')
+  const { status } = useApplication()
   const { user } = useAuth()
-  useEffect(() => {
-    if (!user) return
-    firebase
-      .firestore()
-      .collection('applications')
-      .doc(user.uid)
-      .get()
-      .then(snapshot => {
-        if (!snapshot.exists) setAppStatus('not started')
-      })
-  }, [user])
-  if (!user) return null
+  const appsOpen = new Date() < config.applicationDeadline
+  let feedback: ReactNode
+  switch (status) {
+    case 'unverified':
+      feedback = (
+        <div className='max-w-md'>
+          <p>
+            Verify your email address by going into your email and clicking the verification link.
+          </p>
+          <p>
+            <button
+              className='text-blue-500 font-medium text-sm'
+              onClick={() => user.sendEmailVerification()}>
+              Resend confirmation email &rarr;
+            </button>
+          </p>
+        </div>
+      )
+      break
+    case 'incomplete':
+    case 'not started':
+      feedback = (
+        <div>
+          <p>
+            {status === 'incomplete'
+              ? 'Your application is incomplete.'
+              : "You hasn't started working on your application."}{' '}
+            {appsOpen
+              ? 'To be considered, please complete and submit your application before the deadline.'
+              : 'Unfortunately, the application deadline has passed.'}
+          </p>
+          {appsOpen && (
+            <p>
+              <Link href='/application'>
+                <a className='text-blue-500 font-medium text-sm'>
+                  Fill out your application &rarr;
+                </a>
+              </Link>
+            </p>
+          )}
+        </div>
+      )
+      break
+    case 'submitted':
+      feedback = (
+        <div>
+          <p>
+            Congrats, we&apos;ve receieved your application!{' '}
+            {appsOpen
+              ? 'Missed something? You can edit the application before the deadline.'
+              : "We'll be releasing decisions soon via email. You can also check here."}
+          </p>
+          {appsOpen && (
+            <p>
+              <Link href='/application'>
+                <a className='text-blue-500 font-medium text-sm'>Edit your application &rarr;</a>
+              </Link>
+            </p>
+          )}
+        </div>
+      )
+      break
+    default:
+      feedback = <div></div>
+  }
   return (
     <div className='p-4 max-w-3xl mx-auto my-2 rounded-md bg-white shadow-md border border-gray-200'>
-      <div className='flex flex-row my-2 items-center justify-between'>
-        <span className='text-lg font-medium text-gray-800'>Application Status</span>
-        <span className='text-lg font-medium text-white uppercase p-2 bg-gray-700'>
-          {appStatus}
-        </span>
+      <div className='grid grid-cols-3 my-2 items-center justify-between'>
+        <div className='col-span-2'>
+          <div className='text-lg font-medium text-gray-800'>Application Status</div>
+          {feedback}
+        </div>
+        <div className='flex flex-row items-center justify-end'>
+          {status ? (
+            <span className='text-lg font-medium text-white uppercase py-2 px-4 bg-gray-700 rounded-full select-none'>
+              {status}
+            </span>
+          ) : (
+            <img src='/assets/loading.svg' alt='' className='w-7' />
+          )}
+        </div>
       </div>
     </div>
   )
