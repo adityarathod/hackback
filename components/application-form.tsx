@@ -15,7 +15,16 @@ const ApplicationForm: FC = () => {
   const [initialVals, setInitialVals] = useState(iv)
   const router = useRouter()
   useEffect(() => {
-    if (appData) setInitialVals(appData)
+    if (appData) {
+      const appDataModified = { ...appData }
+      questionOrder
+        .filter(id => questions[id].type === 'bool')
+        .forEach(id => {
+          if (appDataModified[id]) appDataModified[id] = ['checked']
+          else appDataModified[id] = []
+        })
+      setInitialVals(appDataModified)
+    }
   }, [appData])
   const formFields = questionOrder.map(id => (
     <FormField question={questions[id]} key={id} id={id} />
@@ -53,8 +62,14 @@ const ApplicationForm: FC = () => {
   }
 
   const submit = async (values, helpers: FormikHelpers<any>) => {
+    const data = { ...values }
     helpers.setSubmitting(true)
-    await update({ ...values, status: markAsSubmit ? 'submitted' : 'incomplete' })
+    questionOrder
+      .filter(id => questions[id].type === 'bool')
+      .forEach(id => {
+        data[id] = data[id].length > 0
+      })
+    await update({ ...data, status: markAsSubmit ? 'submitted' : 'incomplete' })
     helpers.setSubmitting(false)
     if (markAsSubmit) router.push('/home')
   }
@@ -68,27 +83,25 @@ const ApplicationForm: FC = () => {
             <Form>
               {formFields}
               <div className='mt-4 text-center flex flex-row justify-around'>
-                {appData && appData.status !== 'submitted' && (
+                {appData?.status !== 'submitted' && (
                   <button
                     type='submit'
-                    className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'
+                    className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50'
                     onClick={() => {
                       setMarkAsSubmit(false)
                     }}
-                    disabled={props.isSubmitting}>
+                    disabled={props.isSubmitting || Object.keys(props.errors).length > 0}>
                     Save Without Submitting
                   </button>
                 )}
                 <button
                   type='submit'
-                  className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'
+                  className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50'
                   onClick={() => {
                     setMarkAsSubmit(true)
                   }}
-                  disabled={props.isSubmitting}>
-                  {appData && appData.status !== 'submitted'
-                    ? 'Save & Submit'
-                    : 'Save & Update Application'}
+                  disabled={props.isSubmitting || Object.keys(props.errors).length > 0}>
+                  {appData?.status !== 'submitted' ? 'Save & Submit' : 'Save & Update Application'}
                 </button>
               </div>
             </Form>

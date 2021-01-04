@@ -8,7 +8,9 @@ module.exports = {
     fontFamily: {},
   },
   variants: {
-    extend: {},
+    extend: {
+      opacity: ['disabled'],
+    },
   },
   plugins: [],
 }
