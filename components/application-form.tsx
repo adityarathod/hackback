@@ -1,5 +1,5 @@
-import { FC, ReactNode } from 'react'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
+import { FC, ReactNode, useMemo, useState } from 'react'
+import { Formik, Form, Field, ErrorMessage, FormikProps } from 'formik'
 import config from '../hackback.config'
 import { ApplicationQuestion } from '../types/application'
 
@@ -10,6 +10,39 @@ interface AppFormFieldProps {
 }
 
 const AppFormField: FC<AppFormFieldProps> = (props: AppFormFieldProps) => {
+  let widget: ReactNode
+  if (props.question.type === 'text') {
+    widget = (
+      <Field
+        type='text'
+        as={props.question.essay ? 'textarea' : 'input'}
+        name={props.id}
+        placeholder={props.question.placeholder}
+        className='px-3 py-2 text-sm text-black placeholder-gray-400 border border-gray-200 w-full rounded-md'
+      />
+    )
+  } else if (props.question.type === 'bool') {
+    widget = (
+      <label htmlFor={props.id} className='block px-2'>
+        <Field type='checkbox' name={props.id} value='checked' className='mr-2' />
+        {props.question.label}
+      </label>
+    )
+  } else {
+    widget = (
+      <Field
+        as='select'
+        name={props.id}
+        className='px-3 py-2 text-sm text-black placeholder-gray-400 border border-gray-200 w-full rounded-md'>
+        <option value=''>Pick a value</option>
+        {props.question.choices.map((choice, idx) => (
+          <option value={choice} key={idx}>
+            {choice}
+          </option>
+        ))}
+      </Field>
+    )
+  }
   return (
     <div className='py-2'>
       <div className='my-3'>
@@ -22,15 +55,23 @@ const AppFormField: FC<AppFormFieldProps> = (props: AppFormFieldProps) => {
         </label>
         <ErrorMessage name={props.id} component='div' className='px-2 font-medium text-red-500' />
       </div>
-      {props.children}
+      {widget}
     </div>
   )
 }
 
 const ApplicationForm: FC = () => {
+  const [markAsSubmit, setMarkAsSubmit] = useState<boolean>(false)
   const { questions, questionOrder } = config
-  const initialValues = {}
-  questionOrder.forEach(qid => (initialValues[qid] = ''))
+  const initialValues = useMemo(() => {
+    const iv = {}
+    questionOrder.forEach(qid => (iv[qid] = ''))
+    return iv
+  }, [questionOrder])
+  const formFields = useMemo(
+    () => questionOrder.map(id => <AppFormField question={questions[id]} key={id} id={id} />),
+    [questions, questionOrder]
+  )
 
   const validate = formValues => {
     const errors = {}
@@ -62,57 +103,35 @@ const ApplicationForm: FC = () => {
     })
     return errors
   }
-  const formFields = questionOrder.map(id => {
-    const question = questions[id]
-    switch (question.type) {
-      case 'text':
-        return (
-          <AppFormField question={question} key={id} id={id}>
-            <Field
-              type='text'
-              as={question.essay ? 'textarea' : 'input'}
-              name={id}
-              placeholder={question.placeholder}
-              className='px-3 py-2 text-sm text-black placeholder-gray-400 border border-gray-200 w-full rounded-md'
-            />
-          </AppFormField>
-        )
-      case 'bool':
-        return (
-          <AppFormField question={question} key={id} id={id}>
-            <label htmlFor={id} className='block px-2'>
-              <Field type='checkbox' name={id} value='checked' className='mr-2' />
-              {question.label}
-            </label>
-          </AppFormField>
-        )
-      case 'dropdown':
-        return (
-          <AppFormField question={question} key={id} id={id}>
-            <Field
-              as='select'
-              name={id}
-              className='px-3 py-2 text-sm text-black placeholder-gray-400 border border-gray-200 w-full rounded-md'>
-              <option value=''>Pick a value</option>
-              {question.choices.map((choice, idx) => (
-                <option value={choice} key={idx}>
-                  {choice}
-                </option>
-              ))}
-            </Field>
-          </AppFormField>
-        )
-    }
-  })
+
+  const submit = async values => {
+    console.log(markAsSubmit)
+    console.log(values)
+  }
+
   return (
     <div>
-      <Formik
-        initialValues={initialValues}
-        validate={validate}
-        onSubmit={values => console.log(values)}>
+      <Formik initialValues={initialValues} validate={validate} onSubmit={submit}>
         <Form>
           {formFields}
-          <button type='submit'>Submit</button>
+          <div className='mt-4 text-center flex flex-row justify-around'>
+            <button
+              type='submit'
+              className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'
+              onClick={() => {
+                setMarkAsSubmit(false)
+              }}>
+              Save Without Submitting
+            </button>
+            <button
+              type='submit'
+              className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'
+              onClick={() => {
+                setMarkAsSubmit(true)
+              }}>
+              Save & Submit
+            </button>
+          </div>
         </Form>
       </Formik>
     </div>
