@@ -18,8 +18,11 @@ const Application: FC = () => {
       </Head>
       <Navbar />
       <main>
-        <div className='mx-auto max-w-xl mt-8 mb-4 px-2'>
-          <h1 className='title text-center font-bold text-3xl text-gray-700 mb-6'>Application</h1>
+        <div className='mx-auto max-w-xl mt-8 mb-4 px-4'>
+          <h1 className='title text-center font-bold text-3xl text-gray-700 mb-2'>Application</h1>
+          <p className='text-center italic text-md text-black mb-6'>
+            You&apos;ll be able to edit your submission until the deadline.
+          </p>
           <ApplicationForm />
         </div>
       </main>
