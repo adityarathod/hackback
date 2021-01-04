@@ -2,10 +2,12 @@ import { FC, ReactNode } from 'react'
 import Link from 'next/link'
 import useAuth from '../hooks/useAuth'
 import useApplication from '../hooks/useApplication'
+import config from '../hackback.config'
 
 const ApplicationStatus: FC = () => {
   const { status } = useApplication()
   const { user } = useAuth()
+  const appsOpen = new Date() < config.applicationDeadline
   let feedback: ReactNode
   switch (status) {
     case 'unverified':
@@ -32,13 +34,19 @@ const ApplicationStatus: FC = () => {
             {status === 'incomplete'
               ? 'Your application is incomplete.'
               : "You hasn't started working on your application."}{' '}
-            To be considered, please complete and submit your application before the deadline.
+            {appsOpen
+              ? 'To be considered, please complete and submit your application before the deadline.'
+              : 'Unfortunately, the application deadline has passed.'}
           </p>
-          <p>
-            <Link href='/application'>
-              <a className='text-blue-500 font-medium text-sm'>Fill out your application &rarr;</a>
-            </Link>
-          </p>
+          {appsOpen && (
+            <p>
+              <Link href='/application'>
+                <a className='text-blue-500 font-medium text-sm'>
+                  Fill out your application &rarr;
+                </a>
+              </Link>
+            </p>
+          )}
         </div>
       )
       break
@@ -46,14 +54,18 @@ const ApplicationStatus: FC = () => {
       feedback = (
         <div>
           <p>
-            Congrats, we&apos;ve receieved your application! Missed something? You can edit the
-            application before the deadline.
+            Congrats, we&apos;ve receieved your application!{' '}
+            {appsOpen
+              ? 'Missed something? You can edit the application before the deadline.'
+              : "We'll be releasing decisions soon via email. You can also check here."}
           </p>
-          <p>
-            <Link href='/application'>
-              <a className='text-blue-500 font-medium text-sm'>Edit your application &rarr;</a>
-            </Link>
-          </p>
+          {appsOpen && (
+            <p>
+              <Link href='/application'>
+                <a className='text-blue-500 font-medium text-sm'>Edit your application &rarr;</a>
+              </Link>
+            </p>
+          )}
         </div>
       )
       break

@@ -71,7 +71,7 @@ const ApplicationForm: FC = () => {
       })
     await update({ ...data, status: markAsSubmit ? 'submitted' : 'incomplete' })
     helpers.setSubmitting(false)
-    if (markAsSubmit) router.push('/home')
+    router.push('/home')
   }
 
   return (
