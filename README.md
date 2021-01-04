@@ -7,8 +7,9 @@ Description is a wip
 This is a [Next.js](https://nextjs.org/) project.
 
 1. Clone this repo.
-2. `yarn` to install all deps
-3. Create a Firebase app in the console. Paste in the respective values in `.env.local`:
+2. `cd frontend`
+3. `yarn` to install all deps
+4. Create a Firebase app in the console. Paste in the respective values in `.env.local`:
 
 ```
 NEXT_PUBLIC_FIREBASE_APIKEY
