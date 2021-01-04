@@ -1,7 +1,8 @@
-import { FC, ReactNode, useMemo, useState } from 'react'
-import { Formik, Form, Field, ErrorMessage, FormikProps } from 'formik'
+import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
+import { Formik, Form, Field, ErrorMessage, FormikProps, FormikHelpers } from 'formik'
 import config from '../hackback.config'
 import { ApplicationQuestion } from '../types/application'
+import useApplication from '../hooks/useApplication'
 
 interface AppFormFieldProps {
   question: ApplicationQuestion
@@ -60,18 +61,20 @@ const AppFormField: FC<AppFormFieldProps> = (props: AppFormFieldProps) => {
   )
 }
 
+const { questions, questionOrder } = config
+const iv = {}
+questionOrder.forEach(qid => (iv[qid] = ''))
+
 const ApplicationForm: FC = () => {
   const [markAsSubmit, setMarkAsSubmit] = useState<boolean>(false)
-  const { questions, questionOrder } = config
-  const initialValues = useMemo(() => {
-    const iv = {}
-    questionOrder.forEach(qid => (iv[qid] = ''))
-    return iv
-  }, [questionOrder])
-  const formFields = useMemo(
-    () => questionOrder.map(id => <AppFormField question={questions[id]} key={id} id={id} />),
-    [questions, questionOrder]
-  )
+  const { data: appData, update } = useApplication()
+  const [initialVals, setInitialVals] = useState(iv)
+  useEffect(() => {
+    if (appData) setInitialVals(appData)
+  }, [appData])
+  const formFields = questionOrder.map(id => (
+    <AppFormField question={questions[id]} key={id} id={id} />
+  ))
 
   const validate = formValues => {
     const errors = {}
@@ -104,35 +107,48 @@ const ApplicationForm: FC = () => {
     return errors
   }
 
-  const submit = async values => {
-    console.log(markAsSubmit)
-    console.log(values)
+  const submit = async (values, helpers: FormikHelpers<any>) => {
+    helpers.setSubmitting(true)
+    console.log('submitting with markAsSubmit', markAsSubmit)
+    await update({ ...values, status: markAsSubmit ? 'submitted' : 'incomplete' })
+    helpers.setSubmitting(false)
   }
 
   return (
     <div>
-      <Formik initialValues={initialValues} validate={validate} onSubmit={submit}>
-        <Form>
-          {formFields}
-          <div className='mt-4 text-center flex flex-row justify-around'>
-            <button
-              type='submit'
-              className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'
-              onClick={() => {
-                setMarkAsSubmit(false)
-              }}>
-              Save Without Submitting
-            </button>
-            <button
-              type='submit'
-              className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'
-              onClick={() => {
-                setMarkAsSubmit(true)
-              }}>
-              Save & Submit
-            </button>
-          </div>
-        </Form>
+      <Formik initialValues={initialVals} validate={validate} onSubmit={submit}>
+        {(props: FormikProps<any>) => {
+          useEffect(() => props.setValues(initialVals), [initialVals])
+          return (
+            <Form>
+              {formFields}
+              <div className='mt-4 text-center flex flex-row justify-around'>
+                {appData && appData.status !== 'submitted' && (
+                  <button
+                    type='submit'
+                    className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'
+                    onClick={() => {
+                      setMarkAsSubmit(false)
+                    }}
+                    disabled={props.isSubmitting}>
+                    Save Without Submitting
+                  </button>
+                )}
+                <button
+                  type='submit'
+                  className='bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md'
+                  onClick={() => {
+                    setMarkAsSubmit(true)
+                  }}
+                  disabled={props.isSubmitting}>
+                  {appData && appData.status !== 'submitted'
+                    ? 'Save & Submit'
+                    : 'Save & Update Application'}
+                </button>
+              </div>
+            </Form>
+          )
+        }}
       </Formik>
     </div>
   )
