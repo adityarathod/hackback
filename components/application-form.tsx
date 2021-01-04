@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect, useMemo, useState } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { Formik, Form, Field, ErrorMessage, FormikProps, FormikHelpers } from 'formik'
 import config from '../hackback.config'
 import { ApplicationQuestion } from '../types/application'
@@ -69,6 +70,7 @@ const ApplicationForm: FC = () => {
   const [markAsSubmit, setMarkAsSubmit] = useState<boolean>(false)
   const { data: appData, update } = useApplication()
   const [initialVals, setInitialVals] = useState(iv)
+  const router = useRouter()
   useEffect(() => {
     if (appData) setInitialVals(appData)
   }, [appData])
@@ -109,9 +111,9 @@ const ApplicationForm: FC = () => {
 
   const submit = async (values, helpers: FormikHelpers<any>) => {
     helpers.setSubmitting(true)
-    console.log('submitting with markAsSubmit', markAsSubmit)
     await update({ ...values, status: markAsSubmit ? 'submitted' : 'incomplete' })
     helpers.setSubmitting(false)
+    if (markAsSubmit) router.push('/home')
   }
 
   return (

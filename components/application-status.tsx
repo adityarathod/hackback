@@ -1,10 +1,10 @@
 import { FC, ReactNode } from 'react'
 import Link from 'next/link'
-import useAppStatus from '../hooks/useAppStatus'
 import useAuth from '../hooks/useAuth'
+import useApplication from '../hooks/useApplication'
 
 const ApplicationStatus: FC = () => {
-  const status = useAppStatus()
+  const { status } = useApplication()
   const { user } = useAuth()
   let feedback: ReactNode
   switch (status) {
@@ -37,6 +37,21 @@ const ApplicationStatus: FC = () => {
           <p>
             <Link href='/application'>
               <a className='text-blue-500 font-medium text-sm'>Fill out your application &rarr;</a>
+            </Link>
+          </p>
+        </div>
+      )
+      break
+    case 'submitted':
+      feedback = (
+        <div>
+          <p>
+            Congrats, we&apos;ve receieved your application! Missed something? You can edit the
+            application before the deadline.
+          </p>
+          <p>
+            <Link href='/application'>
+              <a className='text-blue-500 font-medium text-sm'>Edit your application &rarr;</a>
             </Link>
           </p>
         </div>
