@@ -1,66 +1,9 @@
-import { FC, ReactNode, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { Formik, Form, Field, ErrorMessage, FormikProps, FormikHelpers } from 'formik'
-import config from '../hackback.config'
-import { ApplicationQuestion } from '../types/application'
+import { Formik, Form, FormikProps, FormikHelpers } from 'formik'
 import useApplication from '../hooks/useApplication'
-
-interface AppFormFieldProps {
-  question: ApplicationQuestion
-  id: string
-  children?: ReactNode
-}
-
-const AppFormField: FC<AppFormFieldProps> = (props: AppFormFieldProps) => {
-  let widget: ReactNode
-  if (props.question.type === 'text') {
-    widget = (
-      <Field
-        type='text'
-        as={props.question.essay ? 'textarea' : 'input'}
-        name={props.id}
-        placeholder={props.question.placeholder}
-        className='px-3 py-2 text-sm text-black placeholder-gray-400 border border-gray-200 w-full rounded-md'
-      />
-    )
-  } else if (props.question.type === 'bool') {
-    widget = (
-      <label htmlFor={props.id} className='block px-2'>
-        <Field type='checkbox' name={props.id} value='checked' className='mr-2' />
-        {props.question.label}
-      </label>
-    )
-  } else {
-    widget = (
-      <Field
-        as='select'
-        name={props.id}
-        className='px-3 py-2 text-sm text-black placeholder-gray-400 border border-gray-200 w-full rounded-md'>
-        <option value=''>Pick a value</option>
-        {props.question.choices.map((choice, idx) => (
-          <option value={choice} key={idx}>
-            {choice}
-          </option>
-        ))}
-      </Field>
-    )
-  }
-  return (
-    <div className='py-2'>
-      <div className='my-3'>
-        <label htmlFor={props.id} className='text-md font-semibold block px-2'>
-          {props.question.title}
-          {props.question.required ? '*' : ' (optional)'}
-        </label>
-        <label htmlFor={props.id} className='text-sm block px-2'>
-          {props.question.description}
-        </label>
-        <ErrorMessage name={props.id} component='div' className='px-2 font-medium text-red-500' />
-      </div>
-      {widget}
-    </div>
-  )
-}
+import FormField from './form-field'
+import config from '../hackback.config'
 
 const { questions, questionOrder } = config
 const iv = {}
@@ -75,7 +18,7 @@ const ApplicationForm: FC = () => {
     if (appData) setInitialVals(appData)
   }, [appData])
   const formFields = questionOrder.map(id => (
-    <AppFormField question={questions[id]} key={id} id={id} />
+    <FormField question={questions[id]} key={id} id={id} />
   ))
 
   const validate = formValues => {
