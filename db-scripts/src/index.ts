@@ -27,7 +27,7 @@ async function displayMenu() {
     choices: [
       ...choices,
       {
-        title: 'Exit',
+        title: '👋 Exit',
         description: 'Exit the CLI',
         value: -1,
       },

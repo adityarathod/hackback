@@ -4,7 +4,7 @@ import createAdminAccount from '../firebase/admin-account'
 import { logError } from '../util/prettyprinter'
 
 export const meta: CommandMetadata = {
-  name: 'Create admin user',
+  name: '🛠  Create admin user',
 }
 const createAdminUser: Command = async () => {
   const { username, password } = await prompts([
