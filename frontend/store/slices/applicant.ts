@@ -32,7 +32,7 @@ type ApplicantSliceState = {
   error: string
 }
 const initialState: ApplicantSliceState = {
-  loading: true,
+  loading: false,
   status: null,
   application: null,
   error: null,

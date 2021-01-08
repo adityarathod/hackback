@@ -1,13 +1,25 @@
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useEffect } from 'react'
 import Link from 'next/link'
-import useAuth from '../hooks/useAuth'
-import useApplication from '../hooks/useApplication'
+
 import config from '../hackback.config'
 
+import { useDispatch, useSelector } from 'react-redux'
+import { getApplication, selectApplicant } from '../store/slices/applicant'
+import firebase from '../services/firebase'
+
 const ApplicationStatus: FC = () => {
-  const { status } = useApplication()
-  const { user } = useAuth()
+  const { status, loading } = useSelector(selectApplicant)
+  const dispatch = useDispatch()
+
+  // If we haven't gotten the application status yet, go retrieve it
+  useEffect(() => {
+    if (!status && !loading) {
+      dispatch(getApplication())
+    }
+  }, [status])
+
   const appsOpen = new Date() < config.applicationDeadline
+
   let feedback: ReactNode
   switch (status) {
     case 'unverified':
@@ -19,7 +31,7 @@ const ApplicationStatus: FC = () => {
           <p>
             <button
               className='text-blue-500 font-medium text-sm'
-              onClick={() => user.sendEmailVerification()}>
+              onClick={() => firebase.auth().currentUser?.sendEmailVerification()}>
               Resend confirmation email &rarr;
             </button>
           </p>
