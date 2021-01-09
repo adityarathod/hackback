@@ -33,7 +33,7 @@ export const updateApplication = createAsyncThunk<
   if (!user || !user.emailVerified) throw new Error('Cannot update application: not logged in')
   const docRef = await firebase.firestore().collection('applications').doc(user.uid)
   const newStatus: AppStatus = data.submit ? 'submitted' : 'incomplete'
-  const newApp: Application = { ...data.app, status: newStatus }
+  const newApp: Application = { ...data.app, status: newStatus, id: user.uid }
   await docRef.set(newApp, { merge: true })
   console.log('ay')
   return { app: newApp, status: newStatus }

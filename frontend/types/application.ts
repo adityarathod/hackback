@@ -57,6 +57,7 @@ export type ApplicationAnswer = TextAnswer | BooleanAnswer | DropdownAnswer
 
 export interface Application {
   status: AppStatus
+  id: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }
