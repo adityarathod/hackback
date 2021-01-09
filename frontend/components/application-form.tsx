@@ -1,9 +1,13 @@
 import { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Formik, Form, FormikProps, FormikHelpers } from 'formik'
-import useApplication from '../hooks/useApplication'
-import FormField from './form-field'
+
 import config from '../hackback.config'
+
+import FormField from './form-field'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { getApplication, selectApplicant, updateApplication } from '../store/slices/applicant'
 
 const { questions, questionOrder } = config
 const iv = {}
@@ -11,10 +15,15 @@ questionOrder.forEach(qid => (iv[qid] = ''))
 
 const ApplicationForm: FC = () => {
   const [markAsSubmit, setMarkAsSubmit] = useState<boolean>(false)
-  const { data: appData, update } = useApplication()
+  const { application: appData, loading, status } = useSelector(selectApplicant)
+  const dispatch = useDispatch()
   const [initialVals, setInitialVals] = useState(iv)
   const router = useRouter()
+
   useEffect(() => {
+    if (!status && !loading) {
+      dispatch(getApplication())
+    }
     if (appData) {
       const appDataModified = { ...appData }
       questionOrder
@@ -61,16 +70,14 @@ const ApplicationForm: FC = () => {
     return errors
   }
 
-  const submit = async (values, helpers: FormikHelpers<any>) => {
+  const submit = async values => {
     const data = { ...values }
-    helpers.setSubmitting(true)
     questionOrder
       .filter(id => questions[id].type === 'bool')
       .forEach(id => {
         data[id] = data[id].length > 0
       })
-    await update({ ...data, status: markAsSubmit ? 'submitted' : 'incomplete' })
-    helpers.setSubmitting(false)
+    dispatch(updateApplication({ app: data, submit: markAsSubmit }))
     router.push('/home')
   }
 
@@ -79,6 +86,7 @@ const ApplicationForm: FC = () => {
       <Formik initialValues={initialVals} validate={validate} onSubmit={submit}>
         {(props: FormikProps<any>) => {
           useEffect(() => props.setValues(initialVals), [initialVals])
+          useEffect(() => props.setSubmitting(loading), [loading])
           return (
             <Form>
               {formFields}

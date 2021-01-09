@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import firebase from '../../services/firebase'
 import { RootState } from '..'
-import { Application, AppStatus } from '../../types/application'
+import { Application, ApplicationWithoutStatus, AppStatus } from '../../types/application'
 import { selectUser } from './auth'
 
 export const getApplication = createAsyncThunk<
@@ -24,6 +24,21 @@ export const getApplication = createAsyncThunk<
   }
 })
 
+export const updateApplication = createAsyncThunk<
+  { app: Application; status: AppStatus },
+  { app: ApplicationWithoutStatus; submit?: boolean },
+  { state: RootState }
+>('applicant/updateApplication', async (data, thunkAPI) => {
+  const user = selectUser(thunkAPI.getState())
+  if (!user || !user.emailVerified) throw new Error('Cannot update application: not logged in')
+  const docRef = await firebase.firestore().collection('applications').doc(user.uid)
+  const newStatus: AppStatus = data.submit ? 'submitted' : 'incomplete'
+  const newApp: Application = { ...data.app, status: newStatus }
+  await docRef.set(newApp, { merge: true })
+  console.log('ay')
+  return { app: newApp, status: newStatus }
+})
+
 // Create slice
 type ApplicantSliceState = {
   loading: boolean
@@ -42,6 +57,7 @@ const applicantSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
+    // getApplication()
     builder.addCase(getApplication.pending, state => ({ ...state, error: null, loading: true }))
     builder.addCase(getApplication.rejected, (state, action) => ({
       ...state,
@@ -49,6 +65,20 @@ const applicantSlice = createSlice({
       loading: false,
     }))
     builder.addCase(getApplication.fulfilled, (state, action) => ({
+      ...state,
+      error: null,
+      loading: false,
+      status: action.payload.status,
+      application: action.payload.app,
+    }))
+    // updateApplication()
+    builder.addCase(updateApplication.pending, state => ({ ...state, error: null, loading: true }))
+    builder.addCase(updateApplication.rejected, (state, action) => ({
+      ...state,
+      error: action.error.message,
+      loading: false,
+    }))
+    builder.addCase(updateApplication.fulfilled, (state, action) => ({
       ...state,
       error: null,
       loading: false,
