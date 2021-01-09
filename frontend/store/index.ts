@@ -2,11 +2,13 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import authReducer, { authStateListener } from './slices/auth'
 import applicantReducer from './slices/applicant'
+import adminReducer from './slices/admin'
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     applicant: applicantReducer,
+    admin: adminReducer,
   },
   devTools: true,
 })
