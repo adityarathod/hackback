@@ -24,6 +24,7 @@ const Home: FC = () => {
       </Head>
       <Navbar />
       {!isAdmin && <ApplicationStatus />}
+      {isAdmin && <AdminContainer />}
     </div>
   )
 }
