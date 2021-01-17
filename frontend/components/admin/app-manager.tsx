@@ -20,7 +20,11 @@ const AppManager: FC = () => {
     const featuredQKeys = config.questionOrder.filter(key => !!config.questions[key].featured)
     // 2. Generate column entries for featured questions
     const featuredCols = featuredQKeys.map<Column<Application>>((key, idx) => ({
-      Header: config.questions[key].name,
+      Header: () => (
+        <span className={classNames(idx !== 0 ? 'hidden sm:hidden md:block' : null)}>
+          {config.questions[key].name}
+        </span>
+      ),
       accessor: key,
       Cell: ({ value }) => (
         <div
@@ -51,7 +55,7 @@ const AppManager: FC = () => {
       accessor: 'id',
       Cell: ({ value }) => (
         <div className='px-4 w-max'>
-          <Link href={`/details/${value}`}>
+          <Link href={`/application/${value}`}>
             <a className='text-blue-500 font-semibold'>View &rarr;</a>
           </Link>
         </div>
@@ -64,22 +68,34 @@ const AppManager: FC = () => {
   // Get data from Redux
   const { data, loading } = useSelector(selectApps)
   const dispatch = useDispatch()
-  const table = useMemo(() => <AppTable columns={columns} data={data} />, [columns, data])
+  const table = useMemo(
+    () => (
+      <AppTable
+        columns={columns}
+        data={data}
+        onSelectedRowChange={rows => console.log(rows.map(row => row.index))}
+      />
+    ),
+    [columns, data]
+  )
 
   useEffect(() => {
     if ((!data || data.length === 0) && !loading) {
-      dispatch(getNextApplicationPage(1))
+      dispatch(getNextApplicationPage(10))
     }
   }, [data, loading])
 
   return (
     <div className='mt-4 max-w-4xl mx-auto p-4'>
-      <h1 className='title font-bold text-3xl pb-3'>Manage Applications</h1>
+      <h1 className='title font-bold text-3xl mb-7'>Manage Applications</h1>
+      {/* <div className='flex items-center justify-end mb-4'>
+        <Dropdown name='Bulk Actions' options={['Accept all', 'Reject all']} />
+      </div> */}
       <div className='shadow'>{table}</div>
       <button
         className='py-2 px-4 rounded-full bg-blue-400 text-white mt-4 focus:outline-none focus:bg-blue-500 focus:ring-2'
-        onClick={() => dispatch(getNextApplicationPage(1))}>
-        Next &rarr;
+        onClick={() => dispatch(getNextApplicationPage(10))}>
+        Load more
       </button>
     </div>
   )
