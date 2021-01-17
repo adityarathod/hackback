@@ -14,7 +14,6 @@ const questions: Record<string, ApplicationQuestion> = {
     type: 'text',
     name: 'Phone number',
     title: 'Phone Number',
-    // featured: true,
     placeholder: '555-555-5555',
     validationRegex: '^\\d{3}-\\d{3}-\\d{4}$',
     validationFeedback: 'This must be a valid phone number in the XXX-XXX-XXXX format.',
