@@ -21,18 +21,16 @@ const AppTable: FC<AppTableProps> = (props: AppTableProps) => {
     useRowSelect,
     hooks => {
       hooks.visibleColumns.push(columns => [
-        // Let's make a column for selection
+        // Selection column
         {
           id: 'selection',
-          // The header can use the table's getToggleAllRowsSelectedProps method
-          // to render a checkbox
+          // Render checkbox in header
           Header: ({ getToggleAllRowsSelectedProps }) => (
             <div>
               <Checkbox {...getToggleAllRowsSelectedProps()} />
             </div>
           ),
-          // The cell can use the individual row's getToggleRowSelectedProps method
-          // to the render a checkbox
+          // Render checkbox in row
           Cell: ({ row }) => {
             console.log(row.getToggleRowSelectedProps())
             return (
