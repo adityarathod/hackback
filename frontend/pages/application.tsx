@@ -3,18 +3,17 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Navbar from '../components/navbar'
 import FullscreenLoader from '../components/fullscreen-loader'
-import useAuth from '../hooks/useAuth'
 import ApplicationForm from '../components/application-form'
 import config from '../hackback.config'
+import useAuthProtection from '../hooks/useAuthProtection'
 
 const { applicationDeadline } = config
 
 const Application: FC = () => {
-  const { authInitialized, isAuth } = useAuth()
-  const router = useRouter()
+  const loading = useAuthProtection()
   const appsOpen = new Date() < applicationDeadline
-  if (!authInitialized) return <FullscreenLoader />
-  if (!isAuth) router.replace('/auth')
+  if (loading) return <FullscreenLoader />
+
   return (
     <div>
       <Head>

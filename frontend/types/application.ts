@@ -4,15 +4,28 @@ export type AppStatus =
   | 'incomplete'
   | 'submitted'
   | 'accepted'
+  | 'rsvped'
   | 'waitlisted'
   | 'rejected'
   | 'declined'
 
-export interface TextQuestion {
-  type: 'text'
+interface Question {
+  // Type of the question
+  type: string
+  // Name of this question as displayed to the user.
+  name: string
+  // The short title of this question when displayed to admins.
   title: string
+  // Whether or not this question requires an answer.
   required: boolean
+  // A description of this question below the question title.
   description?: string
+  // Whether or not the question should be displayed initially in the admin view.
+  featured?: boolean
+}
+
+export type TextQuestion = Question & {
+  type: 'text'
   essay?: boolean
   charLimit?: number
   validationRegex?: string
@@ -20,21 +33,15 @@ export interface TextQuestion {
   placeholder: string
 }
 
-export interface BooleanQuestion {
+export type BooleanQuestion = Question & {
   type: 'bool'
-  title: string
-  required: boolean
-  description?: string
   label: string
 }
 
-export interface DropdownQuestion {
+export type DropdownQuestion = Question & {
   type: 'dropdown'
-  title: string
-  required: boolean
   choices: string[]
   defaultChoice: string
-  description?: string
 }
 
 export interface TextAnswer {
@@ -57,6 +64,8 @@ export type ApplicationAnswer = TextAnswer | BooleanAnswer | DropdownAnswer
 
 export interface Application {
   status: AppStatus
+  id: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }
+export type ApplicationWithoutStatus = Omit<Application, 'status'>

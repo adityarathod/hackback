@@ -2,11 +2,12 @@ import { FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import config from '../hackback.config'
-import useAuth from '../hooks/useAuth'
 import firebase from '../services/firebase'
+import { useSelector } from 'react-redux'
+import { selectUser } from '../store/slices/auth'
 
 const Navbar: FC = () => {
-  const { user } = useAuth()
+  const user = useSelector(selectUser)
   const router = useRouter()
   const signOut = async () => {
     firebase.auth().signOut()

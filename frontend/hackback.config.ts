@@ -4,12 +4,15 @@ import { HackBackConfig } from './types/config-file'
 const questions: Record<string, ApplicationQuestion> = {
   fullName: {
     type: 'text',
+    name: 'Full name',
     title: 'Full Name',
     placeholder: 'John Doe',
     required: true,
+    featured: true,
   },
   phoneNumber: {
     type: 'text',
+    name: 'Phone number',
     title: 'Phone Number',
     placeholder: '555-555-5555',
     validationRegex: '^\\d{3}-\\d{3}-\\d{4}$',
@@ -18,12 +21,16 @@ const questions: Record<string, ApplicationQuestion> = {
   },
   description: {
     type: 'text',
+    name: 'Self-Description',
     title: 'I would describe myself as a ...',
     placeholder: 'Designer, Data Scientist, iOS Wizard, Hacker Extraordinaire',
+    charLimit: 50,
     required: true,
+    featured: true,
   },
   essay: {
     type: 'text',
+    name: 'Essay',
     title: 'What would you like to learn or get out of HackBack?',
     placeholder: '',
     essay: true,
@@ -31,6 +38,7 @@ const questions: Record<string, ApplicationQuestion> = {
   },
   isAdult: {
     type: 'bool',
+    name: 'Adult?',
     title:
       'Checking this box affirms that you are or will be 18 years or older by the time of the hackathon.',
     description: 'We are not legally allowed to host minors (those under 18) for HackBack 2021.',
@@ -39,6 +47,7 @@ const questions: Record<string, ApplicationQuestion> = {
   },
   dietaryRestrictions: {
     type: 'dropdown',
+    name: 'Dietary restrictions',
     title: 'Do you have any dietary restrictions?',
     description:
       'If you select "Other" and are accepted to HackBack, we will email you for details of your dietary restriction. If you have no such restrictions, please select "No dietary restrictions".',
@@ -62,6 +71,7 @@ const config: HackBackConfig = {
   questionOrder,
   questions,
   applicationDeadline: new Date(2609734019 * 1000),
+  decisionRelease: new Date(1611010703 * 1000),
 }
 
 export default config

@@ -1,16 +1,22 @@
 import { FC } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+
 import ApplicationStatus from '../components/application-status'
 import FullscreenLoader from '../components/fullscreen-loader'
 import Navbar from '../components/navbar'
-import useAuth from '../hooks/useAuth'
+import AdminContainer from '../components/admin/container'
+
+import { useSelector } from 'react-redux'
+import { selectIsAdmin } from '../store/slices/auth'
+import useAuthProtection from '../hooks/useAuthProtection'
 
 const Home: FC = () => {
-  const { authInitialized, isAuth, isAdmin } = useAuth()
-  const router = useRouter()
-  if (!authInitialized) return <FullscreenLoader />
-  if (!isAuth) router.replace('/auth')
+  const loading = useAuthProtection()
+  const isAdmin = useSelector(selectIsAdmin)
+
+  if (loading) return <FullscreenLoader />
+
   return (
     <div>
       <Head>
@@ -18,6 +24,7 @@ const Home: FC = () => {
       </Head>
       <Navbar />
       {!isAdmin && <ApplicationStatus />}
+      {isAdmin && <AdminContainer />}
     </div>
   )
 }
