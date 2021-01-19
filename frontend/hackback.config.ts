@@ -71,6 +71,7 @@ const config: HackBackConfig = {
   questionOrder,
   questions,
   applicationDeadline: new Date(2609734019 * 1000),
+  decisionRelease: new Date(1611010703 * 1000),
 }
 
 export default config

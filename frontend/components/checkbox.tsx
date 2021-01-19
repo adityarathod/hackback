@@ -5,11 +5,13 @@ interface CheckboxProps {
   onChange?: (e: any) => unknown
   className?: string
   checked?: boolean
+  disabled?: boolean
 }
 
 const Checkbox: FC<CheckboxProps> = (props: CheckboxProps) => {
   const [check, setCheck] = useState<boolean>(false)
   const onClick = e => {
+    if (props.disabled) return
     if (props.onChange) props.onChange(e)
     setCheck(!check)
   }
@@ -27,12 +29,14 @@ const Checkbox: FC<CheckboxProps> = (props: CheckboxProps) => {
         'items-center',
         'justify-center',
         'focus:outline-none',
-        'focus:ring-2',
+        !props.disabled && 'focus:ring-2',
         'ring-blue-300',
+        props.disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         !check && 'shadow-inner',
         'bg-white',
         check && 'bg-blue-600',
         check && 'border-blue-600',
+        props.disabled && 'opacity-50',
         'text-white',
         props.className
       )}

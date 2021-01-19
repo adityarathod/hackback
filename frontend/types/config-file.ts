@@ -5,4 +5,5 @@ export type HackBackConfig = {
   questionOrder: string[]
   questions: Record<string, ApplicationQuestion>
   applicationDeadline: Date
+  decisionRelease: Date
 }
